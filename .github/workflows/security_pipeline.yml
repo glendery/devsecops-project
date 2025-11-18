@@ -62,5 +62,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         target: 'http://127.0.0.1:5000'
-        # KUNCI SUKSES: Jangan gagalkan build walau ada warning
         fail_action: false
+        # MATIKAN FITUR INI AGAR TIDAK PERLU IZIN KHUSUS
+        allow_issue_writing: false
