@@ -56,10 +56,9 @@ jobs:
         sleep 10
     
     # INI YANG BENAR:
+    # INI YANG BENAR:
     - name: 5. Security - Run DAST (OWASP ZAP Baseline)
-      uses: owasp/zap-action-baseline@v0.1.1
+      uses: ZAP/zap-action-baseline@v0.1.1
       with:
-        # Target URL aplikasi kita yang sedang berjalan
         target: 'http://localhost:5000'
-        # Beritahu ZAP untuk tidak gagal jika menemukan 'Informational' issues
         fail_action: false
