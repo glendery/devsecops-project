@@ -74,5 +74,13 @@ jobs:
     - name: 6. Security - Run DAST (OWASP ZAP Baseline)
       uses: zaproxy/action-baseline@v0.11.0
       with:
+        # 1. PERBAIKAN UNTUK ERROR IZIN:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+        # 2. TARGET YANG SUDAH BENAR:
         target: 'http://127.0.0.1:5000'
-        min_level: 'HIGH'
+        
+        # 3. PERBAIKAN UNTUK LEVEL GAGAL:
+        # Ini adalah cara yang benar untuk memberitahu ZAP 
+        # agar hanya GAGAL pada level 'HIGH'
+        cmd_options: '-l HIGH''
