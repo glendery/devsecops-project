@@ -25,6 +25,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install bandit safety
+        python test_blockchain.py
 
     # TAHAP 2: DEPENDENCY SCANNING
     - name: 2. Security - Scan for Vulnerable Dependencies

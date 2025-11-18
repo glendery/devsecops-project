@@ -1,84 +1,78 @@
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Merch Store Kampus</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .hero-bg { background: #0d6efd; color: white; padding: 4rem 0; }
-        .card { border: none; shadow: sm; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-5px); }
-    </style>
-  </head>
-  <body>
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="p-5 mb-5 bg-light rounded-3 shadow-sm text-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white;">
+    <div class="container-fluid py-4">
+      <h1 class="display-4 fw-bold">DevSecOps Official Store</h1>
+      <p class="col-md-8 fs-5 mx-auto">Pusat belanja merchandise IT terpercaya. Transaksi Anda dijamin aman dengan teknologi Blockchain transparan.</p>
+      <a href="#katalog" class="btn btn-light btn-lg fw-bold mt-3 text-primary shadow">Mulai Jelajah Katalog <i class="fas fa-arrow-down ms-2"></i></a>
+    </div>
+</div>
+
+<div class="row" id="katalog">
     
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand" href="#">🛒 DevSecOps Merch</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Katalog</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Login</a></li>
-          </ul>
+    <div class="col-md-3">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white fw-bold">
+                <i class="fas fa-filter me-2"></i> Filter Kategori
+            </div>
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted small">Kategori Produk</h6>
+                
+                <div class="list-group list-group-flush small">
+                    <a href="{{ url_for('home', category_name='Semua') }}" class="list-group-item list-group-item-action">Semua Produk</a>
+                    <a href="{{ url_for('home', category_name='Gadget') }}" class="list-group-item list-group-item-action">Gadget</a>
+                    <a href="{{ url_for('home', category_name='Aksesoris') }}" class="list-group-item list-group-item-action">Aksesoris</a>
+                    <a href="{{ url_for('home', category_name='Fashion') }}" class="list-group-item list-group-item-action">Fashion</a>
+                    <a href="{{ url_for('home', category_name='Buku') }}" class="list-group-item list-group-item-action">Buku</a>
+                    <a href="{{ url_for('home', category_name='Lifestyle') }}" class="list-group-item list-group-item-action">Lifestyle</a>
+                    <a href="{{ url_for('home', category_name='Software') }}" class="list-group-item list-group-item-action">Software</a>
+                </div>
+                
+                <h6 class="text-uppercase text-muted small mt-4">Urutkan Berdasarkan</h6>
+                <select class="form-select form-select-sm">
+                    <option>Terbaru (Non-fungsional)</option>
+                    <option>Harga Termurah</option>
+                    <option>Harga Termahal</option>
+                </select>
+            </div>
         </div>
-      </div>
-    </nav>
-
-    <div class="hero-bg text-center">
-      <div class="container">
-        <h1 class="display-4 fw-bold">Pusat Merchandise Kampus</h1>
-        <p class="lead">Beli jaket, buku, dan kopi favoritmu dengan aman.</p>
-        <a href="#" class="btn btn-light btn-lg fw-bold">Belanja Sekarang</a>
-      </div>
     </div>
 
-    <div class="container my-5">
-        <h2 class="text-center mb-4">Produk Terlaris</h2>
+    <div class="col-md-9">
+        
+        <h3 class="fw-bold text-uppercase mb-4">Katalog Terbaru</h3>
+        
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top" alt="Kopi">
-                    <div class="card-body">
-                        <h5 class="card-title">Kopi Robusta Kampus</h5>
-                        <p class="card-text">Kopi hitam nikmat untuk teman begadang nugas.</p>
-                        <h5 class="text-primary">Rp 25.000</h5>
-                        <button class="btn btn-primary w-100 mt-2">Tambah ke Keranjang</button>
+            {% for product in products %}
+            <div class="col-md-4 mb-4"> 
+                <div class="card h-100 border-0 shadow-sm">
+                    <span class="position-absolute top-0 start-0 badge bg-primary m-2 shadow-sm">{{ product.category }}</span>
+                    
+                    <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
+                    
+                    <div class="card-body d-flex flex-column p-3">
+                        <h6 class="card-title fw-bold mb-1">{{ product.name }}</h6>
+                        <p class="card-text small text-muted flex-grow-1 mb-2">{{ product.description }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-2">
+                            <h5 class="text-primary fw-bold mb-0">Rp {{ "{:,.0f}".format(product.price) }}</h5>
+                            <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                <i class="fas fa-cart-plus me-1"></i> Beli
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top" alt="Kaos">
-                    <div class="card-body">
-                        <h5 class="card-title">T-Shirt Alumni</h5>
-                        <p class="card-text">Bahan katun combed 30s yang adem dan nyaman.</p>
-                        <h5 class="text-primary">Rp 85.000</h5>
-                        <button class="btn btn-primary w-100 mt-2">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" class="card-img-top" alt="Buku">
-                    <div class="card-body">
-                        <h5 class="card-title">Buku "DevSecOps 101"</h5>
-                        <p class="card-text">Panduan lengkap menjadi engineer handal.</p>
-                        <h5 class="text-primary">Rp 120.000</h5>
-                        <button class="btn btn-primary w-100 mt-2">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
+        
+        {% if not products %}
+        <div class="alert alert-warning text-center">
+            Tidak ada produk yang ditemukan untuk kategori ini.
+        </div>
+        {% endif %}
     </div>
-
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p>&copy; 2025 DevSecOps Project. Secure by Design.</p>
-    </footer>
-
-  </body>
-</html>
+</div>
+{% endblock %}

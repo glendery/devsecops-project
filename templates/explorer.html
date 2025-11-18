@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>DevSecOps Chain Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background-color: #1a1d21; color: #e0e0e0; font-family: 'Courier New', monospace; }
+        .navbar { border-bottom: 1px solid #333; }
+        .block-card { background-color: #212529; border: 1px solid #343a40; margin-bottom: 20px; }
+        .hash { color: #0d6efd; word-break: break-all; }
+        .badge-block { font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark py-3">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-cubes me-2"></i>DS-CHAIN EXPLORER <span class="badge bg-warning text-dark ms-2">TESTNET</span>
+            </span>
+            <span class="text-muted small">Live Transaction Monitor</span>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-4 text-white-50">Latest Blocks</h4>
+                
+                {% for block in chain|reverse %}
+                <div class="card block-card">
+                    <div class="card-header d-flex justify-content-between align-items-center border-secondary">
+                        <div>
+                            <span class="badge bg-primary badge-block">Block #{{ block.index }}</span>
+                            <span class="text-muted ms-2 small">{{ block.timestamp }}</span>
+                        </div>
+                        <span class="badge bg-secondary">PoW: {{ block.proof }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <small class="text-muted text-uppercase">Previous Hash</small>
+                                <div class="hash">{{ block.previous_hash }}</div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <small class="text-muted text-uppercase mb-2 d-block">Transactions</small>
+                                {% if block.transactions %}
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-sm table-bordered border-secondary">
+                                            <thead>
+                                                <tr class="text-warning">
+                                                    <th>Sender</th>
+                                                    <th>Items</th>
+                                                    <th>Total Value</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for tx in block.transactions %}
+                                                <tr>
+                                                    <td class="text-info">{{ tx.sender }}</td>
+                                                    <td>{{ tx.items }}</td>
+                                                    <td class="text-success">Rp {{ "{:,.0f}".format(tx.total) }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-dark border-secondary mb-0 py-2">
+                                        <i class="fas fa-info-circle me-2"></i>System Genesis Block (No transactions)
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if not loop.last %}
+                    <div class="text-center mb-4 text-secondary opacity-25">
+                        <i class="fas fa-link fa-2x"></i>
+                    </div>
+                {% endif %}
+                
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

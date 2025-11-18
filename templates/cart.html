@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h4 class="mb-0 fw-bold"><i class="fas fa-shopping-cart me-2"></i>Keranjang Belanja</h4>
+            </div>
+            <div class="card-body p-4">
+                {% if cart_items %}
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Produk</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ item.product.image }}" width="50" class="rounded me-3">
+                                            <strong>{{ item.product.name }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>Rp {{ "{:,.0f}".format(item.product.price) }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="fw-bold">Rp {{ "{:,.0f}".format(item.total) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                                    <td class="fw-bold text-primary fs-5">Rp {{ "{:,.0f}".format(total) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="/" class="btn btn-outline-secondary">Lanjut Belanja</a>
+                        {% if current_user.is_authenticated %}
+                            <form action="/checkout" method="POST">
+                                <button type="submit" class="btn btn-success btn-lg px-5">
+                                    <i class="fas fa-lock me-2"></i> Checkout Aman
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="/login" class="btn btn-warning btn-lg px-5">Login untuk Checkout</a>
+                        {% endif %}
+                    </div>
+
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i>
+                        <h3>Keranjang Kosong</h3>
+                        <p class="text-muted">Ayo isi dengan barang-barang keren!</p>
+                        <a href="/" class="btn btn-primary mt-2">Mulai Belanja</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ledger Blockchain Transaksi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hash-text { font-family: monospace; font-size: 0.85rem; color: #d63384; }
+        .block-card { border-left: 5px solid #0d6efd; }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">🛒 DevSecOps Store</a>
+            <a href="/" class="btn btn-outline-light btn-sm">Kembali Belanja</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">🔗 Ledger Blockchain Transaksi</h2>
+            <p class="lead text-muted">Bukti transparansi dan keamanan data pembelian.</p>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                {% for block in chain %}
+                <div class="card mb-3 shadow-sm block-card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <strong class="text-primary">BLOCK #{{ block.index }}</strong>
+                        <span class="badge bg-secondary">Timestamp: {{ block.timestamp }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Previous Hash:</h6>
+                        <p class="hash-text mb-3">{{ block.previous_hash }}</p>
+                        
+                        <h6 class="card-subtitle mb-2 text-muted">Transactions Data:</h6>
+                        {% if block.transactions %}
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Pembeli (Sender)</th>
+                                            <th>Produk</th>
+                                            <th>Harga</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for tx in block.transactions %}
+                                        <tr>
+                                            <td>{{ tx.sender }}</td>
+                                            <td>{{ tx.product }}</td>
+                                            <td>Rp {{ tx.price }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted fst-italic small">System Block (Genesis or Empty Mining)</p>
+                        {% endif %}
+                        
+                        <h6 class="card-subtitle mb-2 text-muted mt-3">Proof of Work:</h6>
+                        <span>{{ block.proof }}</span>
+                    </div>
+                </div>
+                {% if not loop.last %}
+                <div class="text-center mb-3 text-secondary">
+                    <h3>⬇</h3>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
