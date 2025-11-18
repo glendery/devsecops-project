@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_talisman import Talisman
 
 app = Flask(__name__)
-Talisman(app)  
+Talisman(app, force_https=False)
 
 # Halaman utama
 @app.route('/')
