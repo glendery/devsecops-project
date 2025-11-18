@@ -1,16 +1,24 @@
-# app.py
-from flask import Flask, request
+from flask import Flask, render_template, request
 from flask_talisman import Talisman
 
 app = Flask(__name__)
-Talisman(app, force_https=False)
 
-# Halaman utama
+# Konfigurasi CSP untuk mengizinkan Bootstrap CDN & Gambar Unsplash
+csp = {
+    'default-src': ["'self'"],
+    'style-src': ["'self'", "https://cdn.jsdelivr.net"],
+    'img-src': ["'self'", "https://images.unsplash.com", "data:"],
+    'script-src': ["'self'", "https://cdn.jsdelivr.net"]
+}
+
+# Terapkan Talisman dengan CSP yang sudah disesuaikan
+Talisman(app, force_https=False, content_security_policy=csp)
+
 @app.route('/')
 def home():
-    return "Selamat datang di Toko E-commerce Sederhana!"
+    # Render file HTML yang ada di folder templates
+    return render_template('index.html')
 
-# Halaman login (ini akan kita buat 'rentan' nanti)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -18,7 +26,6 @@ def login():
         username = request.form['username']
         return f"Halo, {username}! (Login belum aman)"
     
-    # Menampilkan form login
     return """
     <form method="post">
         Username: <input type="text" name="username"><br>
@@ -28,4 +35,4 @@ def login():
     """
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)  #nosec B104
+    app.run(host='0.0.0.0', port=5000) #nosec B104

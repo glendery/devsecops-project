@@ -1,0 +1,8 @@
+services:
+  devsecopsproject:
+    image: devsecopsproject
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 5002:5002
