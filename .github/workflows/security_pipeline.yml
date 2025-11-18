@@ -58,7 +58,7 @@ jobs:
     # INI YANG BENAR:
     # INI YANG BENAR:
     - name: 5. Security - Run DAST (OWASP ZAP Baseline)
-      uses: ZAP/zap-action-baseline@v0.1.1
+      uses: ZAP/zap-action-baseline@v0.1.
       with:
         target: 'http://localhost:5000'
         fail_action: false
