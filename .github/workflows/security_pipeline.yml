@@ -48,23 +48,31 @@ jobs:
     # --- TAHAP SECURITY SCANNING (DAST) ---
     # Sesuai slide "DAST Tools" [cite: 57, 58]
 
-    - name: 4. Security - Run Application and Wait for It
+    - name: 4. Security - Run Application and Log Output
       run: |
-        # Jalankan aplikasi di background
-        python app.py &
+        # Jalankan aplikasi & alihkan stdout/stderr ke file log
+        python app.py > app.log 2>&1 &
         
-        # Beri waktu 20 detik agar server Flask siap
+        # Beri waktu 20 detik 
         echo "Waiting 20s for app to start..."
         sleep 20
         
         # Lakukan pengecekan kesehatan (health check)
-        # Ini akan mencoba 5 kali untuk terhubung sebelum gagal
         echo "Running health check..."
         curl --retry 5 --retry-delay 5 -v http://localhost:5000
-    
-   # INI YANG BENAR:
-    - name: 5. Security - Run DAST (OWASP ZAP Baseline)
+        
+    # LANGKAH BARU UNTUK DEBUGGING
+    - name: 5. Display Application Logs
+      # Selalu jalankan langkah ini, bahkan jika curl di atas gagal
+      if: always() 
+      run: |
+        echo "--- Menampilkan isi app.log ---"
+        cat app.log
+        echo "--------------------------------"
+
+    # Langkah DAST (sekarang jadi Langkah 6)
+    - name: 6. Security - Run DAST (OWASP ZAP Baseline)
       uses: zaproxy/action-baseline@v0.11.0
       with:
-        target: 'http://localhost:5000' # <--- KEMBALI KE SINI
+        target: 'http://localhost:5000'
         fail_action: false
