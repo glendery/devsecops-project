@@ -53,8 +53,7 @@ jobs:
         # Jalankan aplikasi di background
         python app.py &
         
-        # Beri waktu 20 detik (bukan 10) agar server Flask siap
-        # Beberapa runner bisa lambat
+        # Beri waktu 20 detik agar server Flask siap
         echo "Waiting 20s for app to start..."
         sleep 20
         
