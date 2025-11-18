@@ -74,5 +74,7 @@ jobs:
     - name: 6. Security - Run DAST (OWASP ZAP Baseline)
       uses: zaproxy/action-baseline@v0.11.0
       with:
-        target: 'http://127.0.0.1:5000' # <--- GUNAKAN IP
-        fail_action: false
+        target: 'http://127.0.0.1:5000'
+        # Beritahu ZAP untuk GAGAL HANYA jika menemukan 
+        # isu 'HIGH'. (Default-nya 'LOW')
+        fail_level: 'HIGH'
