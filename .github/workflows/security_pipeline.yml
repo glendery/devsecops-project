@@ -4,10 +4,9 @@
 name: DevSecOps Security Pipeline
 
 # 2. Pemicu (Trigger)
-# Pipeline ini akan berjalan setiap kali ada 'push' ke branch 'main'
 on:
   push:
-    branches: [ "main" ] # Ganti 'main' jika nama branch utama Anda 'master'
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -30,26 +29,36 @@ jobs:
         python-version: 3.9
 
     # --- TAHAP BUILD (Simulasi) & TEST ---
-    # Sesuai slide "Build Stage"  dan "Test Stage" [cite: 45]
-    # Kita akan install semua dependensi
     - name: 1. Build & Test Stage - Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install bandit safety # Install alat security kita
+        pip install bandit safety 
 
-    # --- TAHAP SECURITY SCANNING ---
-    # Sesuai slide "Security Scanning Stage" [cite: 47]
+    # --- TAHAP SECURITY SCANNING (SAST & DEPENDENCY) ---
     
-    # Langkah 3: Menjalankan Dependency Scanning 
-    # Alat 'safety' akan memeriksa 'requirements.txt' 
-    # terhadap database kerentanan
     - name: 2. Security - Scan for Vulnerable Dependencies
       run: |
         safety check -r requirements.txt
         
-    # Langkah 4: Menjalankan SAST (Static Analysis) 
-    # Alat 'bandit' akan memindai 'app.py' dari celah keamanan umum Python
     - name: 3. Security - Run SAST (Bandit)
       run: |
         bandit -r . -f txt
+
+    # --- TAHAP SECURITY SCANNING (DAST) ---
+    # Sesuai slide "DAST Tools" [cite: 57, 58]
+
+    - name: 4. Security - Run Application in Background
+      run: |
+        # Jalankan aplikasi di background (&) agar langkah selanjutnya bisa berjalan
+        python app.py &
+        # Beri waktu 10 detik agar server Flask siap
+        sleep 10
+    
+    - name: 5. Security - Run DAST (OWASP ZAP)
+      uses: actions/zapaction@v0.2.0
+      with:
+        # Target URL aplikasi kita yang sedang berjalan
+        target: 'http://localhost:5000'
+        # (Opsional) Kita bisa tentukan file aturan untuk mengabaikan
+        # temuan tertentu, tapi kita biarkan default dulu
