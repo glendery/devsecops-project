@@ -55,10 +55,9 @@ jobs:
         # Beri waktu 10 detik agar server Flask siap
         sleep 10
     
-    # INI YANG BENAR:
-    # INI YANG BENAR:
+   # INI YANG BENAR:
     - name: 5. Security - Run DAST (OWASP ZAP Baseline)
-      uses: ZAP/zap-action-baseline@v0.1.
+      uses: zaproxy/action-baseline@v0.1.1
       with:
         target: 'http://localhost:5000'
         fail_action: false
