@@ -1,68 +1,58 @@
-# 🛡️ DEVS ECOSYSTEM: SECURE E-COMMERCE WITH BLOCKCHAIN AUDIT LEDGER
+# 🛡️ DEVS ECOSYSTEM: TOKO ONLINE AMAN DENGAN BLOCKCHAIN AUDIT
 
-## 1. 🌐 PROJECT OVERVIEW & ARCHITECTURE
+Halo! Selamat datang di repositori proyek **DevSecOps E-commerce** ini.
 
-Proyek ini adalah implementasi **Full-Stack E-commerce** yang berorientasi pada prinsip **DevSecOps (Shift-Left Security)**. Tujuan utamanya adalah membangun pipeline CI/CD otomatis yang mengintegrasikan pengujian keamanan sejak fase *commit*, dan menjamin integritas data transaksi menggunakan teknologi *immutable ledger* (Blockchain).
+Proyek ini bukan cuma toko online biasa, tapi **simulasi ekosistem keamanan** lengkap. Saya tunjukkan bahwa aplikasi modern itu harus *Secure by Design*—keamanan harus otomatis sejak awal *coding*.
 
-### A. Teknologi Inti (Tech Stack)
-| Komponen | Teknologi | Tujuan |
+## 1. 🖥️ ARCHITECTURE & PILIHAN TEKNOLOGI SAYA
+
+| Komponen | Teknologi | Alasan Saya Memilih |
 | :--- | :--- | :--- |
-| **Backend** | Python 3.11+, Flask | Routing, API, dan Logika Aplikasi. |
-| **Database** | SQLite + Flask-SQLAlchemy | Persistence untuk data Pengguna dan Produk. |
-| **Frontend** | HTML5, Jinja2, Bootstrap 5 | Tampilan responsif dan User Interface. |
-| **Data Integrity** | Python Custom Class + SHA-256 | Implementasi *Proof-of-Work* sederhana untuk mencatat transaksi pembelian. |
-| **Version Control** | Git/GitHub | Source code management dan pemicu CI/CD. |
-
-### B. Model Data Kunci
-Proyek ini menggunakan model `User` yang mendukung **Role-Based Access Control (RBAC)** dan model `Product` yang di-seed otomatis saat startup.
+| **Backend** | Python Flask | Cepat, ringan, dan efektif untuk membuat *routing* serta logika bisnis yang aman. |
+| **Database** | SQLite + Flask-SQLAlchemy | Simpel untuk pengembangan (*persistence* data lokal). |
+| **Data Integrity** | Python Custom Ledger | Saya membuat *class* Blockchain sendiri (SHA-256) untuk menjamin setiap transaksi **tidak bisa diubah**. |
+| **Security Headers** | Flask-Talisman | Saya gunakan ini untuk implementasi *Content Security Policy* (CSP) dan mengamankan *browser user*. |
 
 ---
 
-## 2. ⚙️ DEVS ECOSYSTEM PIPELINE (CI/CD)
+## 2. ⚙️ PIPELINE DEVOPS SAYA (CI/CD OTOMATIS)
 
-Pipeline ini diimplementasikan menggunakan **GitHub Actions** dan dirancang untuk mengintegrasikan pengujian keamanan statis dan dinamis pada setiap *push* kode.
+Ini adalah jantung DevSecOps-nya! Saya menggunakan **GitHub Actions** untuk memastikan setiap kode yang saya *push* itu aman.
 
-| Tahap Pipeline | Alat | Keterangan Teknis |
-| :--- | :--- | :--- |
-| **1. Dependency Check** | **Safety** (SCA) | Menganalisis `requirements.txt` terhadap database kerentanan CVE yang diketahui. |
-| **2. SAST** | **Bandit** | Menganalisis kode sumber Python (`app.py`) untuk mencari pola *security anti-patterns* (misalnya: penggunaan `host='0.0.0.0'` tanpa *disclaimer*, *insecure hashing*, dll.). |
-| **3. DAST (Runtime)** | **OWASP ZAP Baseline** | Menyerang aplikasi yang sedang berjalan di *host network* (Port 5002) untuk mencari celah *runtime* (misalnya, *misconfigured headers*). |
-| **4. Observability** | **Python JSON Logger** | Menghasilkan log audit terstruktur (JSON) untuk semua peristiwa kritis (Login, Registrasi, Checkout) yang dapat dianalisis oleh sistem monitoring (ELK Stack/Splunk). |
-| **Kebijakan Gagal** | Custom Logic | Pipeline diatur untuk **gagal** jika ditemukan kerentanan *Critical/High* (SAST/SCA), tetapi akan *pass* jika hanya ditemukan *Warnings* (setelah *Risk Acceptance*). |
-
----
-
-## 3. 🛡️ IMPLEMENTASI KEAMANAN & FITUR KHUSUS
-
-### A. Secure Logic & Access Control
-* **Seeding Admin:** Akun **Super Admin** (`admin`/`admin123`) dibuat secara otomatis pada startup server untuk menjamin keberadaan pengguna tingkat tinggi tanpa perlu pendaftaran publik.
-* **Role-Based Access:** Logika akses ke `/admin` dilindungi oleh dekorator `@login_required` dan pemeriksaan `current_user.role == 'admin'`, mencegah akses tidak sah.
-* **Password Hashing:** Menggunakan fungsi `generate_password_hash` dari Werkzeug dengan algoritma modern (PBKDF2/Scrypt) untuk penyimpanan kredensial yang aman.
-
-### B. Content Security Policy (CSP)
-Aplikasi ini menggunakan **Flask-Talisman** untuk menerapkan *security headers*. Konfigurasi CSP telah di-tune secara manual untuk:
-* Mengizinkan pemuatan file dari CDN (`cdn.jsdelivr.net`, `cdnjs.cloudflare.com`).
-* Mengizinkan *inline styles* (`'unsafe-inline'`) untuk Bootstrap, tanpa membuka celah XSS yang luas.
-* Mengizinkan gambar hanya dari sumber lokal (`'self'`) untuk demonstrasi (dikonfigurasi untuk menggunakan gambar *placeholder* lokal).
-
-### C. Solusi Bug (Membuktikan Problem Solving)
-Selama pengembangan, kami menemukan dan menyelesaikan dua bug persisten yang menunjukkan kerumitan *runtime* Python:
-1.  **Bug Data Corrupted:** Mengatasi masalah di mana *transaction ledger* merekam objek Python yang rusak (`<built-in method items of dict object...>)` alih-alih *string* nama produk. Masalah ini diselesaikan dengan memastikan **string formatting yang tepat** (`", ".join(items_summary)`) dan mematikan server secara paksa.
-2.  **Jinja TypeError:** Mengatasi *crash* pada Dashboard Admin yang disebabkan oleh **Jinja** yang mencoba menggunakan operator `in` pada objek yang rusak. Solusi melibatkan penambahan filter pengecekan `|string` pada template untuk mencegah `TypeError`.
+| Tahap Pipeline | Alat | Apa yang Saya Uji? | Bukti Kerja Keras Saya |
+| :--- | :--- | :--- | :--- |
+| **1. Dependency Check** | **Safety** (SCA) | Saya menganalisis *library* untuk mengecek apakah ada **CVE (kerentanan) publik**. | Ini menjamin *software* saya bebas dari risiko **Supply Chain Attack**. |
+| **2. SAST (Static Code)** | **Bandit** | Saya menganalisis kode sumber Python. Saya harus memperbaiki *warning* seperti penggunaan port tanpa *disclaimer* (e.g., `#nosec B104`). | Saya belajar cara memberi *disclaimer* yang benar pada kode yang aman. |
+| **3. DAST (Runtime Scan)** | **OWASP ZAP** | Saya menyerang aplikasi saya sendiri saat berjalan. Mencari lubang keamanan web (misal: *missing headers*, *misconfiguration*). | Ini membuktikan aplikasi saya aman dalam kondisi nyata. |
+| **4. Observability** | **JSON Logger** | Saya implementasikan *logging* terstruktur (JSON) untuk semua event penting (Login, Checkout, Register). Ini penting untuk *auditing* dan *troubleshooting* di masa depan. |
 
 ---
 
-## 4. 🚀 CARA MENJALANKAN & VERIFIKASI
+## 3. 🔑 SOLUSI PROBLEM SOLVING SAYA
+
+Ini adalah *highlight* yang menunjukkan saya menyelesaikan masalah teknis yang tidak trivial dan mengamankan aplikasi:
+
+1.  **Bug Data Corrupted:** Saya mengatasi *bug* di mana *ledger* merekam objek Python yang rusak (`<built-in method items...>)` dan berhasil memperbaikinya dengan **string formatting yang tepat** (`", ".join(...)`).
+2.  **Solusi Jinja TypeError:** Saya memperbaiki *crash* pada Dashboard Admin yang disebabkan oleh data lama dengan menambahkan filter **`|string`** pada Jinja untuk menanggulangi `TypeError` saat rendering.
+3.  **Mengamankan Headers:** Saya *tune* sendiri konfigurasi **Flask-Talisman** untuk *Content Security Policy* (CSP) untuk mengizinkan gambar dan *styling* eksternal tanpa mengorbankan keamanan.
+
+---
+
+## 4. 🚀 CARA MENJALANKAN & KREDENSIAL
 
 ### A. Akses Aplikasi (Port 5002)
-* **Web Toko:** `http://127.0.0.1:5002`
-* **Dashboard Admin:** `http://127.0.0.1:5002/admin`
+
+1.  Jalankan di terminal: `python app.py`
+2.  **Toko Online:** Buka `http://127.0.0.1:5002`
+3.  **Dashboard Admin:** Buka `http://127.0.0.1:5002/admin`
 
 ### B. Kredensial Uji Coba
-| Akun | Username | Password | Hak Akses |
-| :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin` | `admin123` | Akses Dashboard Penuh, Semua Data Transaksi. |
-| **Buyer (Contoh)** | (Daftar manual) | (Bebas) | Belanja, Riwayat Pesanan Saya. |
 
-### C. Verifikasi Keamanan
-Untuk menguji pipeline, lakukan perubahan kecil pada `app.py` dan lakukan `git commit` & `git push`. Pipeline GitHub Actions akan langsung berjalan untuk memverifikasi keamanan statis (Bandit/Safety) dan dinamis (ZAP).
+| Akun | Username | Password |
+| :--- | :--- | :--- |
+| **Super Admin** | `admin` | `admin123` |
+| **Pembeli** | (Daftar Lewat Web) | (Bebas) |
+
+---
+
+**Proyek ini membuktikan saya tidak hanya bisa *ngoding*, tapi juga *ngamanin*!**
