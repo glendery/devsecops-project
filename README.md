@@ -84,4 +84,4 @@ Ini adalah *highlight* yang menunjukkan bahwa saya menguasai *debugging* tingkat
 
 ---
 
-**Proyek ini membuktikan saya tidak hanya bisa *ngoding*, tapi juga *ngamanin*!**
+'T E R I M A K A S I H'
