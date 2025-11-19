@@ -1,96 +1,68 @@
-# DevSecOps E-Commerce & Blockchain Ledger
+# 🛡️ DEVS ECOSYSTEM: SECURE E-COMMERCE WITH BLOCKCHAIN AUDIT LEDGER
 
-![DevSecOps](https://img.shields.io/badge/DevSecOps-Enabled-green?style=for-the-badge&logo=github-actions)
-![Python](https://img.shields.io/badge/Python-3.9+-blue?style=for-the-badge&logo=python)
-![Security](https://img.shields.io/badge/Security-OWASP%20ZAP%20%7C%20Bandit-red?style=for-the-badge)
+## 1. 🌐 PROJECT OVERVIEW & ARCHITECTURE
 
-Proyek ini adalah implementasi **Secure Software Development Life Cycle (SSDLC)** untuk aplikasi E-Commerce sederhana yang terintegrasi dengan teknologi **Blockchain** untuk transparansi transaksi.
+Proyek ini adalah implementasi **Full-Stack E-commerce** yang berorientasi pada prinsip **DevSecOps (Shift-Left Security)**. Tujuan utamanya adalah membangun pipeline CI/CD otomatis yang mengintegrasikan pengujian keamanan sejak fase *commit*, dan menjamin integritas data transaksi menggunakan teknologi *immutable ledger* (Blockchain).
 
-Tujuan utama proyek ini bukan hanya membangun aplikasi, tetapi mendemonstrasikan penerapan pipeline **DevSecOps** yang otomatis, aman, dan patuh standar (Compliance).
+### A. Teknologi Inti (Tech Stack)
+| Komponen | Teknologi | Tujuan |
+| :--- | :--- | :--- |
+| **Backend** | Python 3.11+, Flask | Routing, API, dan Logika Aplikasi. |
+| **Database** | SQLite + Flask-SQLAlchemy | Persistence untuk data Pengguna dan Produk. |
+| **Frontend** | HTML5, Jinja2, Bootstrap 5 | Tampilan responsif dan User Interface. |
+| **Data Integrity** | Python Custom Class + SHA-256 | Implementasi *Proof-of-Work* sederhana untuk mencatat transaksi pembelian. |
+| **Version Control** | Git/GitHub | Source code management dan pemicu CI/CD. |
 
-## 🚀 Fitur Utama
-
-### 🛒 Fitur Aplikasi
-* **Manajemen Pengguna:** Registrasi & Login aman (Hashing SHA-256/PBKDF2).
-* **E-Commerce:** Katalog produk, Keranjang Belanja, dan Checkout.
-* **Blockchain Ledger:** Setiap transaksi pembelian dicatat dalam *immutable ledger* (buku besar yang tidak bisa diubah) menggunakan *Proof-of-Work* sederhana.
-* **Blockchain Explorer:** Halaman khusus `/explorer` untuk memantau blok transaksi secara transparan.
-
-### 🛡️ Fitur Keamanan (DevSecOps)
-* **Content Security Policy (CSP):** Perlindungan terhadap XSS menggunakan `flask-talisman`.
-* **Secure Headers:** Implementasi HSTS, X-Frame-Options, dan X-Content-Type-Options.
-* **Input Validation:** Sanitasi input pada form Login/Register untuk mencegah SQL Injection.
-* **Automated Pipeline:** Integrasi CI/CD penuh menggunakan GitHub Actions.
+### B. Model Data Kunci
+Proyek ini menggunakan model `User` yang mendukung **Role-Based Access Control (RBAC)** dan model `Product` yang di-seed otomatis saat startup.
 
 ---
 
-## 🛠️ Arsitektur & Tech Stack
+## 2. ⚙️ DEVS ECOSYSTEM PIPELINE (CI/CD)
 
-* **Backend:** Python (Flask)
-* **Database:** SQLite (dengan SQLAlchemy ORM)
-* **Frontend:** HTML5, Bootstrap 5, FontAwesome
-* **Security Tools:**
-    * **SCA (Software Composition Analysis):** `safety` (Mengecek library rentan).
-    * **SAST (Static Application Security Testing):** `bandit` (Menganalisis kode Python).
-    * **DAST (Dynamic Application Security Testing):** `OWASP ZAP` (Menyerang aplikasi aktif untuk mencari celah runtime).
+Pipeline ini diimplementasikan menggunakan **GitHub Actions** dan dirancang untuk mengintegrasikan pengujian keamanan statis dan dinamis pada setiap *push* kode.
 
----
-
-## ⚙️ Pipeline DevSecOps (CI/CD)
-
-Proyek ini menggunakan **GitHub Actions** untuk mengotomatisasi pengujian keamanan pada setiap `push` atau `pull request`.
-
-**Alur Pipeline (`.github/workflows/security_pipeline.yml`):**
-
-1.  **Build & Install:** Menyiapkan lingkungan Python dan menginstall dependensi.
-2.  **Dependency Scanning:** Memeriksa `requirements.txt` terhadap database kerentanan umum (CVE).
-3.  **SAST (Static Analysis):** Menjalankan `bandit` untuk mencari pola kode tidak aman (misal: *hardcoded password*, *unsafe functions*).
-4.  **Application Health Check:** Memastikan aplikasi berhasil berjalan (`curl localhost:5002`).
-5.  **DAST (Dynamic Analysis):** Menjalankan **OWASP ZAP Baseline Scan** untuk memindai aplikasi yang sedang berjalan dari celah keamanan web (XSS, CSRF, Misconfiguration).
+| Tahap Pipeline | Alat | Keterangan Teknis |
+| :--- | :--- | :--- |
+| **1. Dependency Check** | **Safety** (SCA) | Menganalisis `requirements.txt` terhadap database kerentanan CVE yang diketahui. |
+| **2. SAST** | **Bandit** | Menganalisis kode sumber Python (`app.py`) untuk mencari pola *security anti-patterns* (misalnya: penggunaan `host='0.0.0.0'` tanpa *disclaimer*, *insecure hashing*, dll.). |
+| **3. DAST (Runtime)** | **OWASP ZAP Baseline** | Menyerang aplikasi yang sedang berjalan di *host network* (Port 5002) untuk mencari celah *runtime* (misalnya, *misconfigured headers*). |
+| **4. Observability** | **Python JSON Logger** | Menghasilkan log audit terstruktur (JSON) untuk semua peristiwa kritis (Login, Registrasi, Checkout) yang dapat dianalisis oleh sistem monitoring (ELK Stack/Splunk). |
+| **Kebijakan Gagal** | Custom Logic | Pipeline diatur untuk **gagal** jika ditemukan kerentanan *Critical/High* (SAST/SCA), tetapi akan *pass* jika hanya ditemukan *Warnings* (setelah *Risk Acceptance*). |
 
 ---
 
-## 💻 Cara Menjalankan (Lokal)
+## 3. 🛡️ IMPLEMENTASI KEAMANAN & FITUR KHUSUS
 
-Ikuti langkah ini untuk menjalankan aplikasi di komputer Anda:
+### A. Secure Logic & Access Control
+* **Seeding Admin:** Akun **Super Admin** (`admin`/`admin123`) dibuat secara otomatis pada startup server untuk menjamin keberadaan pengguna tingkat tinggi tanpa perlu pendaftaran publik.
+* **Role-Based Access:** Logika akses ke `/admin` dilindungi oleh dekorator `@login_required` dan pemeriksaan `current_user.role == 'admin'`, mencegah akses tidak sah.
+* **Password Hashing:** Menggunakan fungsi `generate_password_hash` dari Werkzeug dengan algoritma modern (PBKDF2/Scrypt) untuk penyimpanan kredensial yang aman.
 
-1.  **Clone Repository**
-    ```bash
-    git clone [https://github.com/USERNAME_ANDA/devsecops-project.git](https://github.com/USERNAME_ANDA/devsecops-project.git)
-    cd devsecops-project
-    ```
+### B. Content Security Policy (CSP)
+Aplikasi ini menggunakan **Flask-Talisman** untuk menerapkan *security headers*. Konfigurasi CSP telah di-tune secara manual untuk:
+* Mengizinkan pemuatan file dari CDN (`cdn.jsdelivr.net`, `cdnjs.cloudflare.com`).
+* Mengizinkan *inline styles* (`'unsafe-inline'`) untuk Bootstrap, tanpa membuka celah XSS yang luas.
+* Mengizinkan gambar hanya dari sumber lokal (`'self'`) untuk demonstrasi (dikonfigurasi untuk menggunakan gambar *placeholder* lokal).
 
-2.  **Buat Virtual Environment**
-    ```bash
-    python -m venv venv
-    venv\Scripts\activate  # (atau source venv/bin/activate di Mac/Linux)
-    ```
-
-3.  **Install Dependensi**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  **Jalankan Aplikasi**
-    ```bash
-    python app.py
-    ```
-
-5.  **Akses Aplikasi (Port 5002)**
-    * **Toko Online:** Buka `http://127.0.0.1:5002` di browser.
-    * **Blockchain Explorer:** Buka `http://127.0.0.1:5002/explorer`.
-
-### 🔑 Akun Super Admin Default
-
-Anda dapat menguji Dashboard Admin tanpa mendaftar (akun dibuat otomatis saat startup):
-* **Username:** `admin`
-* **Password:** `admin123`
+### C. Solusi Bug (Membuktikan Problem Solving)
+Selama pengembangan, kami menemukan dan menyelesaikan dua bug persisten yang menunjukkan kerumitan *runtime* Python:
+1.  **Bug Data Corrupted:** Mengatasi masalah di mana *transaction ledger* merekam objek Python yang rusak (`<built-in method items of dict object...>)` alih-alih *string* nama produk. Masalah ini diselesaikan dengan memastikan **string formatting yang tepat** (`", ".join(items_summary)`) dan mematikan server secara paksa.
+2.  **Jinja TypeError:** Mengatasi *crash* pada Dashboard Admin yang disebabkan oleh **Jinja** yang mencoba menggunakan operator `in` pada objek yang rusak. Solusi melibatkan penambahan filter pengecekan `|string` pada template untuk mencegah `TypeError`.
 
 ---
 
-## 🧪 Pengujian Blockchain
+## 4. 🚀 CARA MENJALANKAN & VERIFIKASI
 
-Untuk membuktikan integritas Blockchain, Anda dapat menjalankan unit test yang tersedia:
+### A. Akses Aplikasi (Port 5002)
+* **Web Toko:** `http://127.0.0.1:5002`
+* **Dashboard Admin:** `http://127.0.0.1:5002/admin`
 
-```bash
-python test_blockchain.py
+### B. Kredensial Uji Coba
+| Akun | Username | Password | Hak Akses |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `admin` | `admin123` | Akses Dashboard Penuh, Semua Data Transaksi. |
+| **Buyer (Contoh)** | (Daftar manual) | (Bebas) | Belanja, Riwayat Pesanan Saya. |
+
+### C. Verifikasi Keamanan
+Untuk menguji pipeline, lakukan perubahan kecil pada `app.py` dan lakukan `git commit` & `git push`. Pipeline GitHub Actions akan langsung berjalan untuk memverifikasi keamanan statis (Bandit/Safety) dan dinamis (ZAP).
