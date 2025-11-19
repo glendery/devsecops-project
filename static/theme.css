@@ -1,0 +1,238 @@
+/* ============================================
+   DevSecOps Store — THEME (Dark Glassmorphism)
+   Compatible with Bootstrap 5.x
+   ============================================ */
+
+/* ---------- Root Variables (Dark) ---------- */
+:root{
+  --bg-1: #0b1020;            /* page deep background */
+  --bg-2: linear-gradient(120deg,#071026 0%, #0d1730 45%, #101726 100%);
+  --card-bg: rgba(18,22,30,0.55);
+  --card-border: rgba(255,255,255,0.06);
+  --glass-blur: 8px;
+  --glass-strong-blur: 14px;
+  --accent: linear-gradient(90deg,#3a8dff,#9b5cff);
+  --muted: #97a0b3;
+  --text: #e6eef8;
+  --subtle: rgba(230,238,248,0.06);
+  --radius-lg: 14px;
+  --radius-sm: 8px;
+  --shadow-soft: 0 8px 30px rgba(2,6,23,0.6);
+  --transition: 220ms;
+}
+
+/* ---------- Global ---------- */
+* { box-sizing: border-box; }
+
+html,body {
+  height: 100%;
+  background: var(--bg-2);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* keep bootstrap layout intact: do NOT override .row/.col behaviour */
+
+/* ---------- App container ---------- */
+.container {
+  max-width: 1320px;
+}
+
+/* ---------- Navbar (Dark glass) ---------- */
+.navbar {
+  background: rgba(7,11,20,0.55) !important;
+  backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--shadow-soft);
+  padding: .6rem 1rem !important;
+}
+
+/* brand & links */
+.navbar-brand { color: var(--text) !important; font-weight:700; }
+.navbar .nav-link { color: var(--muted) !important; transition: color var(--transition); }
+.navbar .nav-link:hover, .navbar .nav-link.active { color: var(--text) !important; font-weight:600; }
+
+/* ---------- Cards (General) ---------- */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(var(--glass-strong-blur));
+  box-shadow: 0 6px 24px rgba(2,6,23,0.6);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+  color: var(--text);
+}
+
+.card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(2,6,23,0.7); }
+
+/* product-card inherits card but with subtle tweaks */
+.product-card {
+  background: rgba(16,20,28,0.55);   /* darker glass for product */
+  color: var(--text);
+  border-radius: 12px;
+  height: 100%;                       /* allow .h-100 to fill column */
+  display: flex;
+  flex-direction: column;
+}
+
+/* card image: consistent height, responsive */
+.product-card .card-img-top,
+.product-card img.card-img-top {
+  width: 100%;
+  height: 200px;        /* consistent visual height */
+  object-fit: cover;
+  display: block;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* make image a bit darker overlay for contrast */
+.product-card .img-overlay {
+  position: relative;
+}
+.product-card .img-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,0.28));
+  pointer-events: none;
+}
+
+/* card body layout */
+.product-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem;
+  flex: 1 1 auto;
+}
+
+/* title / meta */
+.product-card .card-title {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.product-card .text-muted {
+  color: var(--muted) !important;
+  font-size: .8rem;
+}
+
+/* price */
+.product-card .fw-bold.text-primary {
+  color: #7bd389 !important;  /* mint-ish accent */
+  font-weight: 800;
+  font-size: 1rem;
+  margin-bottom: .25rem;
+}
+
+/* description: limit lines but allow grow */
+.product-card .text-muted.small.flex-grow-1,
+.product-card .description {
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.25;
+  margin-bottom: .5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* action button pinned to bottom */
+.product-card .btn {
+  margin-top: auto;
+  border-radius: 10px;
+  padding: .55rem .8rem;
+  font-weight: 700;
+}
+
+/* primary button variant */
+.btn-primary {
+  background: linear-gradient(90deg,#3a8dff 0%, #9b5cff 100%);
+  border: none;
+  color: white;
+  box-shadow: 0 6px 20px rgba(58,141,255,0.12), inset 0 -2px 6px rgba(0,0,0,0.12);
+}
+.btn-outline-primary {
+  border-radius: 10px;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* badges */
+.badge {
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  border-radius: 8px;
+}
+
+/* table tweaks - dark friendly */
+.table {
+  background: rgba(10,12,18,0.45);
+  border: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+}
+.table thead th { color: var(--muted); border-bottom: 1px solid rgba(255,255,255,0.03); }
+
+/* alerts */
+.alert { background: rgba(255,255,255,0.03); color: var(--text); border: 1px solid rgba(255,255,255,0.03); }
+
+/* links */
+a { color: inherit; text-decoration: none; transition: color var(--transition); }
+a:hover { color: var(--text); }
+
+/* animations */
+.fade-in { animation: fadeIn .45s ease both; opacity: 0; transform: translateY(6px); }
+@keyframes fadeIn { to { opacity: 1; transform: none; } }
+
+/* ---------- Grid safety: do NOT override Bootstrap cols/rows ---------- */
+/* Ensure bootstrap .row and .col behave normally (we only add spacing helpers) */
+.row.g-4 { gap: 1.25rem; }
+
+/* If any older conflicting rules exist, these neutralize the most damaging ones */
+.product-card { width: auto !important; max-width: 100% !important; } 
+.product-card img { max-width: 100% !important; height: 200px !important; object-fit: cover !important; }
+
+/* ---------- Responsive adjustments ---------- */
+@media (max-width: 992px) {
+  .product-card .card-img-top { height: 180px; }
+}
+@media (max-width: 576px) {
+  .product-card .card-img-top { height: 150px; }
+  .card { border-radius: 10px; }
+}
+
+/* ---------- Small UI helpers ---------- */
+.center-text { text-align:center; }
+.align-top { vertical-align: top; }
+
+/* ---------- Debug class (remove in prod) ----------
+.use-grid-outline * { outline: 1px dashed rgba(255,255,255,0.03); } 
+------------------------------------------------- */
+.alert {
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.alert-success {
+    background: rgba(0, 255, 100, 0.1);
+    color: #8dffb7;
+}
+
+.alert-danger {
+    background: rgba(255, 50, 50, 0.1);
+    color: #ff9d9d;
+}
+
+.alert-warning {
+    background: rgba(255, 180, 0, 0.1);
+    color: #ffd77a;
+}

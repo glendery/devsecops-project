@@ -1,91 +1,74 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>DevSecOps Chain Explorer</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { background-color: #1a1d21; color: #e0e0e0; font-family: 'Courier New', monospace; }
-        .navbar { border-bottom: 1px solid #333; }
-        .block-card { background-color: #212529; border: 1px solid #343a40; margin-bottom: 20px; }
-        .hash { color: #0d6efd; word-break: break-all; }
-        .badge-block { font-size: 1.2rem; }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-dark bg-dark py-3">
-        <div class="container">
-            <span class="navbar-brand mb-0 h1">
-                <i class="fas fa-cubes me-2"></i>DS-CHAIN EXPLORER <span class="badge bg-warning text-dark ms-2">TESTNET</span>
-            </span>
-            <span class="text-muted small">Live Transaction Monitor</span>
-        </div>
-    </nav>
+{% extends "layout.html" %}
+{% block content %}
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <h4 class="mb-4 text-white-50">Latest Blocks</h4>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0"><i class="bi bi-box-seam me-2"></i>Blockchain Explorer</h3>
+    <div class="d-flex gap-2">
+        <span class="badge bg-primary py-2 px-3 fw-bold shadow-sm">Blocks: {{ total_blocks }}</span>
+        <span class="badge bg-success py-2 px-3 fw-bold shadow-sm">Transactions: {{ total_txs }}</span>
+    </div>
+</div>
+
+<div class="accordion fade-in" id="blocksAccordion">
+    {% for b in blocks|reverse %}
+    <div class="accordion-item card shadow-lg mb-3"> 
+        
+        <h2 class="accordion-header bg-dark" id="heading{{ b.index }}">
+            <button class="accordion-button {% if not loop.first %}collapsed{% endif %} bg-dark text-white fw-bold" 
+                    type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ b.index }}">
+                Block #{{ b.index }} — {{ b.timestamp }} ({{ b.tx_count }} tx)
+            </button>
+        </h2>
+
+        <div id="collapse{{ b.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#blocksAccordion">
+            <div class="accordion-body bg-dark text-white small">
                 
-                {% for block in chain|reverse %}
-                <div class="card block-card">
-                    <div class="card-header d-flex justify-content-between align-items-center border-secondary">
-                        <div>
-                            <span class="badge bg-primary badge-block">Block #{{ block.index }}</span>
-                            <span class="text-muted ms-2 small">{{ block.timestamp }}</span>
-                        </div>
-                        <span class="badge bg-secondary">PoW: {{ block.proof }}</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <small class="text-muted text-uppercase">Previous Hash</small>
-                                <div class="hash">{{ block.previous_hash }}</div>
-                            </div>
-                            
-                            <div class="col-md-12">
-                                <small class="text-muted text-uppercase mb-2 d-block">Transactions</small>
-                                {% if block.transactions %}
-                                    <div class="table-responsive">
-                                        <table class="table table-dark table-sm table-bordered border-secondary">
-                                            <thead>
-                                                <tr class="text-warning">
-                                                    <th>Sender</th>
-                                                    <th>Items</th>
-                                                    <th>Total Value</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for tx in block.transactions %}
-                                                <tr>
-                                                    <td class="text-info">{{ tx.sender }}</td>
-                                                    <td>{{ tx.items }}</td>
-                                                    <td class="text-success">Rp {{ "{:,.0f}".format(tx.total) }}</td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {% else %}
-                                    <div class="alert alert-dark border-secondary mb-0 py-2">
-                                        <i class="fas fa-info-circle me-2"></i>System Genesis Block (No transactions)
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
+                <div class="mb-3">
+                    <p class="mb-1"><strong><i class="bi bi-shield-lock me-1"></i> Signature (HMAC):</strong></p>
+                    <code class="hash-text small" style="word-break: break-all;">{{ b.signature }}</code>
                 </div>
-                
-                {% if not loop.last %}
-                    <div class="text-center mb-4 text-secondary opacity-25">
-                        <i class="fas fa-link fa-2x"></i>
-                    </div>
+
+                <p class="mb-1"><strong><i class="bi bi-key-fill me-1"></i> Proof:</strong> {{ b.proof }}</p>
+                <p class="mb-3"><strong><i class="bi bi-link-45deg me-1"></i> Prev Hash:</strong> 
+                    <code class="hash-text small" style="word-break: break-all;">{{ b.previous_hash }}</code>
+                </p>
+
+                <h6 class="mt-3 border-bottom pb-1">Transactions ({{ b.tx_count }})</h6>
+
+                {% if b.transactions %}
+                <ul class="list-group list-group-flush">
+                    {% for tx in b.transactions %}
+                    <li class="list-group-item bg-secondary text-white border-bottom border-dark my-1 p-2 rounded-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong class="text-info">{{ tx.sender }}</strong> 
+                                <span class="badge bg-success ms-2">Rp {{ "{:,}".format(tx.total) }}</span>
+                            </div>
+                            <div class="text-muted small">{{ tx.timestamp|datetime_format }}</div>
+                        </div>
+                        
+                        <div class="mt-1">
+                            {% if tx.items_list %}
+                                {% for item in tx.items_list %}
+                                    <span class="badge bg-primary text-white me-1">{{ item }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-danger">Data Item Corrupt/Gagal Parse!</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="alert alert-info small">Tidak ada transaksi di blok ini.</div>
                 {% endif %}
-                
-                {% endfor %}
+
             </div>
         </div>
+
     </div>
-</body>
-</html>
+    {% endfor %}
+</div>
+
+{% endblock %}

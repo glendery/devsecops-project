@@ -1,109 +1,153 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark"><i class="fas fa-user-shield me-2"></i>Dashboard Super Admin</h2>
-        <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-download me-2"></i>Cetak Laporan</button>
-    </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <div class="card bg-primary text-white shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-coins me-2"></i>Total Pendapatan</h5>
-                    <h2 class="fw-bold mt-2">Rp {{ "{:,.0f}".format(revenue) }}</h2>
-                    <p class="card-text small text-white-50">Total nilai transaksi valid di Blockchain</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card bg-success text-white shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-exchange-alt me-2"></i>Total Transaksi</h5>
-                    <h2 class="fw-bold mt-2">{{ transactions|length }}</h2>
-                    <p class="card-text small text-white-50">Jumlah blok transaksi tercatat</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card bg-dark text-white shadow h-100">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fas fa-users me-2"></i>Total Pengguna</h5>
-                    <h2 class="fw-bold mt-2">{{ users|length }}</h2>
-                    <p class="card-text small text-white-50">Akun terdaftar (Admin + Buyer)</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0"><i class="bi bi-speedometer me-2"></i>Admin Dashboard</h3>
+    
+    <a href="{{ url_for('explorer') }}" class="btn btn-sm btn-outline-info">
+        <i class="bi bi-box-seam"></i> Lihat Blockchain Explorer
+    </a>
+</div>
 
-    <div class="card shadow mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-            <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-list-alt me-2"></i>Log Transaksi (Real-time Blockchain)</h5>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Block ID</th>
-                        <th>Pengirim (User)</th>
-                        <th>Detail Barang</th>
-                        <th>Total Harga</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for tx in transactions %}
-                    <tr>
-                        <td><span class="badge bg-secondary">#{{ tx.block_index }}</span></td>
-                        <td class="fw-bold">{{ tx.sender }}</td>
-                        <td class="text-muted small">{{ tx.items }}</td>
-                        <td class="fw-bold text-success">Rp {{ "{:,.0f}".format(tx.total) }}</td>
-                        <td><span class="badge bg-success"><i class="fas fa-check me-1"></i> Valid</span></td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">Belum ada transaksi yang tercatat.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="d-flex gap-3 mb-4 flex-wrap">
+    <span class="badge bg-success py-2 px-3 fw-bold shadow-sm">
+        <i class="bi bi-cash-stack me-1"></i> Revenue: Rp {{ "{:,}".format(revenue) }}
+    </span>
+    <span class="badge bg-primary py-2 px-3 fw-bold shadow-sm">
+        <i class="bi bi-people me-1"></i> Total Users: {{ users|length }}
+    </span>
+    <span class="badge bg-secondary py-2 px-3 fw-bold shadow-sm">
+        <i class="bi bi-hash me-1"></i> Total Transactions: {{ transactions|length }}
+    </span>
+</div>
 
-    <div class="card shadow">
-        <div class="card-header bg-white py-3 border-bottom">
-            <h5 class="mb-0 fw-bold text-dark"><i class="fas fa-database me-2"></i>Database Pengguna</h5>
-        </div>
-        <div class="card-body p-0">
-            <table class="table table-bordered mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th width="50">ID</th>
-                        <th>Username</th>
-                        <th>Role (Hak Akses)</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td class="text-center">{{ user.id }}</td>
-                        <td class="fw-bold">{{ user.username }}</td>
-                        <td>
-                            {% if user.role == 'admin' %}
-                                <span class="badge bg-danger w-100">SUPER ADMIN</span>
-                            {% else %}
-                                <span class="badge bg-info text-dark w-100">PEMBELI</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-success"><i class="fas fa-circle fa-xs me-1"></i> Aktif</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="row">
+    <div class="col-12 fade-in">
+        <div class="card shadow-lg border-0 mb-5">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Daftar Pengguna Terdaftar</h5>
+                <p class="card-text text-muted small">Kelola dan audit peran pengguna yang terdaftar di DevSecOps Store.</p>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm align-middle table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#ID</th>
+                                <th>Username</th>
+                                <th>Peran (Role)</th>
+                                <th>Status</th>
+                                <th style="min-width: 180px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td><i class="bi bi-person-fill me-1"></i> {{ user.username }}</td>
+                                <td>
+                                    {% if user.role == 'admin' %}
+                                        <span class="badge bg-danger"><i class="bi bi-shield-lock"></i> Admin</span>
+                                    {% else %}
+                                        <span class="badge bg-success"><i class="bi bi-bag"></i> Buyer</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">Aktif</span>
+                                </td>
+                                <td>
+                                    {% if user.id == current_user.id %}
+                                        <button class="btn btn-sm btn-secondary disabled">Akun Anda</button>
+                                    {% else %}
+                                        <form method="POST" action="{{ url_for('admin_change_role', user_id=user.id) }}" class="d-inline me-1">
+                                            {% if user.role == 'buyer' %}
+                                                <input type="hidden" name="new_role" value="admin">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="return confirm('Yakin ingin jadikan {{ user.username }} sebagai Admin?')">
+                                                    <i class="bi bi-arrow-up-circle"></i> Jadikan Admin
+                                                </button>
+                                            {% else %}
+                                                <input type="hidden" name="new_role" value="buyer">
+                                                <button type="submit" class="btn btn-sm btn-outline-success" 
+                                                        onclick="return confirm('Yakin ingin turunkan peran {{ user.username }} menjadi Buyer?')">
+                                                    <i class="bi bi-arrow-down-circle"></i> Jadikan Buyer
+                                                </button>
+                                            {% endif %}
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                                    onclick="return confirm('PERINGATAN: Menghapus pengguna {{ user.username }} akan menghilangkan data login. Lanjutkan?')">
+                                                <i class="bi bi-trash"></i> Hapus
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12 fade-in">
+        <div class="card shadow-lg border-0">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Log Transaksi Blockchain</h5>
+                <p class="card-text text-muted small">Detail setiap barang, harga, dan kuantitas yang tersimpan di Blockchain.</p>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-sm align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Tanggal & Waktu</th>
+                                <th>User</th>
+                                <th style="min-width: 200px;">Detail Barang</th>
+                                <th>Harga Satuan</th>
+                                <th>Qty</th>
+                                <th>Log Blockchain</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for tx in transactions|reverse %}
+                                {% for item in tx.detailed_items %}
+                                <tr>
+                                    <td class="small text-muted fw-bold">
+                                        {% if loop.first %}
+                                            {{ tx.timestamp|datetime_format }}
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">
+                                        {% if loop.first %}
+                                            {{ tx.sender }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">{{ item.name }}</span>
+                                    </td>
+                                    <td>Rp {{ "{:,}".format(item.price) }}</td>
+                                    <td>{{ item.qty }}</td>
+                                    <td class="small text-muted">
+                                        {% if loop.first %}
+                                            <span class="hash-text">#{{ tx.block_index }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr><td colspan="6" class="text-center text-muted">Tidak ada transaksi.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

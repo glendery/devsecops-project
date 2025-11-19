@@ -1,78 +1,48 @@
 {% extends "layout.html" %}
-
 {% block content %}
 
-<div class="p-5 mb-5 bg-light rounded-3 shadow-sm text-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white;">
-    <div class="container-fluid py-4">
-      <h1 class="display-4 fw-bold">DevSecOps Official Store</h1>
-      <p class="col-md-8 fs-5 mx-auto">Pusat belanja merchandise IT terpercaya. Transaksi Anda dijamin aman dengan teknologi Blockchain transparan.</p>
-      <a href="#katalog" class="btn btn-light btn-lg fw-bold mt-3 text-primary shadow">Mulai Jelajah Katalog <i class="fas fa-arrow-down ms-2"></i></a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0">Katalog Produk</h3>
+
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('home') }}" class="btn btn-sm btn-outline-primary {% if not request.view_args.category_name %}active{% endif %}">Semua</a>
+    <a href="{{ url_for('home', category_name='Gadget') }}" class="btn btn-sm btn-outline-primary">Gadget</a>
+    <a href="{{ url_for('home', category_name='Aksesoris') }}" class="btn btn-sm btn-outline-primary">Aksesoris</a>
+    <a href="{{ url_for('home', category_name='Fashion') }}" class="btn btn-sm btn-outline-primary">Fashion</a>
+    <a href="{{ url_for('home', category_name='Lifestyle') }}" class="btn btn-sm btn-outline-primary">Lifestyle</a>
+    <a href="{{ url_for('home', category_name='Buku') }}" class="btn btn-sm btn-outline-primary">Buku</a>
+    <a href="{{ url_for('home', category_name='Software') }}" class="btn btn-sm btn-outline-primary">Software</a>
+  </div>
 </div>
 
-<div class="row" id="katalog">
-    
-    <div class="col-md-3">
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white fw-bold">
-                <i class="fas fa-filter me-2"></i> Filter Kategori
-            </div>
-            <div class="card-body">
-                <h6 class="text-uppercase text-muted small">Kategori Produk</h6>
-                
-                <div class="list-group list-group-flush small">
-                    <a href="{{ url_for('home', category_name='Semua') }}" class="list-group-item list-group-item-action">Semua Produk</a>
-                    <a href="{{ url_for('home', category_name='Gadget') }}" class="list-group-item list-group-item-action">Gadget</a>
-                    <a href="{{ url_for('home', category_name='Aksesoris') }}" class="list-group-item list-group-item-action">Aksesoris</a>
-                    <a href="{{ url_for('home', category_name='Fashion') }}" class="list-group-item list-group-item-action">Fashion</a>
-                    <a href="{{ url_for('home', category_name='Buku') }}" class="list-group-item list-group-item-action">Buku</a>
-                    <a href="{{ url_for('home', category_name='Lifestyle') }}" class="list-group-item list-group-item-action">Lifestyle</a>
-                    <a href="{{ url_for('home', category_name='Software') }}" class="list-group-item list-group-item-action">Software</a>
-                </div>
-                
-                <h6 class="text-uppercase text-muted small mt-4">Urutkan Berdasarkan</h6>
-                <select class="form-select form-select-sm">
-                    <option>Terbaru (Non-fungsional)</option>
-                    <option>Harga Termurah</option>
-                    <option>Harga Termahal</option>
-                </select>
-            </div>
-        </div>
-    </div>
+{% if not products %}
+  <div class="alert alert-info shadow-sm">Tidak ada produk pada kategori ini.</div>
+{% else %}
+  <div class="row g-4">
+    {% for p in products %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 fade-in">
+        <div class="card product-card h-100">
 
-    <div class="col-md-9">
-        
-        <h3 class="fw-bold text-uppercase mb-4">Katalog Terbaru</h3>
-        
-        <div class="row">
-            {% for product in products %}
-            <div class="col-md-4 mb-4"> 
-                <div class="card h-100 border-0 shadow-sm">
-                    <span class="position-absolute top-0 start-0 badge bg-primary m-2 shadow-sm">{{ product.category }}</span>
-                    
-                    <img src="{{ product.image }}" class="card-img-top" alt="{{ product.name }}" style="height: 220px; object-fit: cover;">
-                    
-                    <div class="card-body d-flex flex-column p-3">
-                        <h6 class="card-title fw-bold mb-1">{{ product.name }}</h6>
-                        <p class="card-text small text-muted flex-grow-1 mb-2">{{ product.description }}</p>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-2">
-                            <h5 class="text-primary fw-bold mb-0">Rp {{ "{:,.0f}".format(product.price) }}</h5>
-                            <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                <i class="fas fa-cart-plus me-1"></i> Beli
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+          <img src="{{ p.image }}" class="card-img-top" alt="{{ p.name }}">
+
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ p.name }}</h5>
+            <p class="text-muted small mb-1">{{ p.category }}</p>
+
+            <p class="fw-bold text-primary mb-2">Rp {{ "{:,}".format(p.price) }}</p>
+
+            <p class="text-muted small flex-grow-1">{{ p.description }}</p>
+
+            <a href="{{ url_for('add_to_cart', product_id=p.id) }}"
+               class="btn btn-primary mt-2 w-100">
+               <i class="bi bi-cart-plus"></i> Tambah ke Keranjang
+            </a>
+          </div>
+
         </div>
-        
-        {% if not products %}
-        <div class="alert alert-warning text-center">
-            Tidak ada produk yang ditemukan untuk kategori ini.
-        </div>
-        {% endif %}
-    </div>
-</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 {% endblock %}
