@@ -1,14 +1,12 @@
 # 🛡️ DEVS ECOSYSTEM: TOKO ONLINE AMAN DENGAN BLOCKCHAIN AUDIT
 
-Halo! Selamat datang di repositori proyek **DevSecOps E-commerce** ini.
-
-Proyek ini adalah **aplikasi *e-commerce* yang saya rancang sendiri** dan saya jadikan arena simulasi untuk menerapkan prinsip **DevSecOps (Shift-Left Security)**. Fokus saya adalah membuktikan bahwa aplikasi modern itu harus *Secure by Design*—keamanan harus otomatis sejak awal *coding*.
+Halo! Ini adalah proyek **DevSecOps E-commerce** yang saya rancang sendiri untuk menerapkan *Secure by Design*—keamanan harus otomatis sejak awal *coding*.
 
 ## 1. 🖥️ ARCHITECTURE & PILIHAN TEKNOLOGI SAYA
 
 | Komponen | Teknologi | Alasan Saya Memilih |
 | :--- | :--- | :--- |
-| **Backend** | Python Flask | Cepat, ringan, dan efektif untuk membuat *routing* serta logika bisnis yang aman. |
+| **Backend** | Python Flask | Cepat, ringan, dan efektif untuk *prototyping* yang aman. |
 | **Database** | SQLite + Flask-SQLAlchemy | Persistence untuk data Pengguna dan Produk. |
 | **Data Integrity** | Python Custom Ledger | Saya membuat *class* Blockchain sendiri (SHA-256) untuk menjamin setiap transaksi **tidak bisa diubah**. |
 | **Security Headers** | Flask-Talisman | Saya gunakan ini untuk implementasi *Content Security Policy* (CSP) dan mengamankan *browser user*. |
@@ -17,28 +15,37 @@ Proyek ini adalah **aplikasi *e-commerce* yang saya rancang sendiri** dan saya j
 
 ## 2. ⚙️ PIPELINE DEVOPS SAYA (CI/CD OTOMATIS)
 
-Saya menggunakan **GitHub Actions** untuk membuat *pipeline* yang otomatis menguji keamanan kode saya setiap kali saya melakukan *push*.
-
-| Tahap Pipeline | Alat | Apa yang Saya Uji? | Bukti Kerja Keras Saya |
-| :--- | :--- | :--- | :--- |
-| **1. Dependency Check** | **Safety** (SCA) | Menganalisis *library* untuk mengecek apakah ada **CVE (kerentanan) publik**. | Ini menjamin *software* saya bebas dari risiko **Supply Chain Attack**. |
-| **2. SAST (Static Code)** | **Bandit** | Menganalisis kode sumber Python. Saya harus memperbaiki *warning* seperti penggunaan port tanpa *disclaimer* (e.g., `#nosec B104`). | Saya belajar cara memberi *disclaimer* yang benar pada kode yang aman. |
-| **3. DAST (Runtime Scan)** | **OWASP ZAP** | Menyerang aplikasi saya saat berjalan. Mencari lubang keamanan web (misal: *misconfigured headers*). | Ini membuktikan aplikasi saya aman dalam kondisi nyata. |
-| **4. Observability** | **JSON Logger** | Saya implementasikan *logging* terstruktur (JSON) untuk semua event penting. Ini penting untuk *auditing* dan *troubleshooting*. |
+Pipeline saya menggunakan **GitHub Actions** dan mengintegrasikan **Safety** (SCA), **Bandit** (SAST), dan **OWASP ZAP** (DAST) untuk pengujian keamanan otomatis pada setiap *push*.
 
 ---
 
 ## 3. 🔑 SOLUSI PROBLEM SOLVING KRITIS SAYA
 
-1.  **Mengatasi Data Corruption Persisten (The Immutability Challenge):** Saya fokus memperbaiki *write logic* dengan memastikan **string formatting yang tepat** (`", ".join(items_summary)`) dan melakukan prosedur *Database Reset* wajib pada *environment* pengembangan untuk menjamin integritas data di Block baru.
-2.  **Menyelesaikan Konflik Jaringan DAST & CSP:** Saya berhasil mendiagnosis ini sebagai **masalah konfigurasi Docker Networking**. Saya menyelesaikan kegagalan koneksi dengan memaksakan konfigurasi **`--network=host`** dan menggunakan `127.0.0.1` sebagai target.
-3.  **Memperbaiki Jinja Template Crash:** Saya mengimplementasikan **Jinja Conditional Filter** (`|string`) pada *template* untuk menanggulangi *TypeError* saat data lama yang rusak dibaca, mencegah *crash* fatal.
+Ini adalah *highlight* yang menunjukkan bahwa saya menguasai *debugging* tingkat lanjut dan membuat keputusan arsitektur yang aman:
+
+1.  **Mengatasi Data Corruption Persisten (The Immutability Challenge):**
+    * **Masalah:** Ledger merekam *object* Python yang rusak (`<built-in method items...>)` alih-alih *string* nama produk.
+    * **Solusi Saya:** Saya fokus memperbaiki *write logic* dengan memastikan **string formatting yang tepat** (`", ".join(items_summary)`) dan saya buat prosedur *Database Reset* wajib pada *environment* pengembangan untuk menjamin integritas data di Block baru.
+
+2.  **Penerapan Akses Kontrol (RBAC) & Seeding Aman:**
+    * **Masalah:** Saya perlu membedakan hak akses Admin dan Buyer tanpa mengizinkan user biasa mendaftar sebagai Admin.
+    * **Solusi Saya:** Saya mengimplementasikan **Role-Based Access Control (RBAC)** dan membuat fungsi **`seed_admin()`** yang otomatis menanam akun Admin (`admin`/`admin123`) dengan *hashed password* saat *startup*. Ini mencegah pendaftaran Admin publik.
+
+3.  **Frontend Security Hardening (CSP Tuning):**
+    * **Masalah:** Pengaturan *default* CSP memblokir *styling* dan *icon* dari CDN (Bootstrap/FontAwesome), membuat tampilan rusak.
+    * **Solusi Saya:** Saya secara manual mengatur ulang CSP untuk mengizinkan **`'unsafe-inline'`** untuk `style-src` dan mengizinkan `https://cdnjs.cloudflare.com` untuk `font-src`, yang menjamin tampilan tetap cantik sambil mempertahankan kontrol atas sumber daya yang diizinkan.
+
+4.  **Menyelesaikan Konflik Jaringan DAST:**
+    * **Masalah:** OWASP ZAP gagal tersambung ke aplikasi Flask saya dengan error *Connection Refused* pada GitHub Actions.
+    * **Solusi Saya:** Saya berhasil mendiagnosis ini sebagai **masalah konfigurasi Docker Networking**. Saya menyelesaikan kegagalan koneksi dengan memverifikasi konfigurasi **`--network=host`** dan menggunakan *target* eksplisit `127.0.0.1`.
+
+5.  **Memperbaiki Jinja Template Crash (Menangani Data Historis Rusak):**
+    * **Masalah:** Admin Dashboard *crash* dengan *fatal error* **`TypeError`** saat membaca data lama yang rusak dari Blockchain.
+    * **Solusi Saya:** Saya mengimplementasikan **Jinja Conditional Filter** (`|string`) pada *template* untuk memaksa objek yang rusak dikonversi menjadi *string* terlebih dahulu, mencegah *crash* fatal, dan menunjukkan bahwa aplikasi saya mampu menangani *corrupted historical data* dengan elegan.
 
 ---
 
 ## 4. 🚀 PANDUAN COMMAND LINE LENGKAP (CHEAT SHEET)
-
-Ini adalah semua perintah yang dibutuhkan untuk mengelola, menjalankan, dan menyelesaikan proyek ini.
 
 ### 4.1. ⚙️ Setup & Instalasi Lingkungan
 
@@ -46,7 +53,7 @@ Ini adalah semua perintah yang dibutuhkan untuk mengelola, menjalankan, dan meny
 | :--- | :--- |
 | `python -m venv .venv` | Membuat *Virtual Environment* baru. |
 | `.venv\Scripts\activate` | **Mengaktifkan** lingkungan (`(.venv)` muncul di terminal). |
-| `pip install -r requirements.txt` | Menginstal semua *dependencies* (Flask, SQLAlchemy, ZAP, Bandit, dll.). |
+| `pip install -r requirements.txt` | Menginstal semua *dependencies* proyek. |
 
 ### 4.2. 🗑️ Database & Maintenance
 
@@ -60,7 +67,7 @@ Ini adalah semua perintah yang dibutuhkan untuk mengelola, menjalankan, dan meny
 | Command | Keterangan |
 | :--- | :--- |
 | `python app.py` | Menjalankan Server Flask di **Port 5002**. |
-| `http://127.0.0.1:5002` | **Akses Utama:** URL Toko Online Anda. |
+| `http://127.0.0.1:5002` | **Akses Toko Online.** |
 | `http://127.0.0.1:5002/admin` | **Akses Dashboard Admin.** |
 
 | Kredensial Admin | Username | Password |
