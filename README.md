@@ -45,10 +45,8 @@ Proyek ini menggunakan **GitHub Actions** untuk mengotomatisasi pengujian keaman
 1.  **Build & Install:** Menyiapkan lingkungan Python dan menginstall dependensi.
 2.  **Dependency Scanning:** Memeriksa `requirements.txt` terhadap database kerentanan umum (CVE).
 3.  **SAST (Static Analysis):** Menjalankan `bandit` untuk mencari pola kode tidak aman (misal: *hardcoded password*, *unsafe functions*).
-4.  **Application Health Check:** Memastikan aplikasi berhasil berjalan (`curl localhost:5000`).
+4.  **Application Health Check:** Memastikan aplikasi berhasil berjalan (`curl localhost:5002`).
 5.  **DAST (Dynamic Analysis):** Menjalankan **OWASP ZAP Baseline Scan** untuk memindai aplikasi yang sedang berjalan dari celah keamanan web (XSS, CSRF, Misconfiguration).
-
-> **Kebijakan Keamanan:** Pipeline dikonfigurasi untuk memberikan peringatan pada isu *Medium* dan tetap lolos (*Pass*) jika risiko dapat diterima (Risk Acceptance) untuk demonstrasi, namun tercatat di log.
 
 ---
 
@@ -62,13 +60,10 @@ Ikuti langkah ini untuk menjalankan aplikasi di komputer Anda:
     cd devsecops-project
     ```
 
-2.  **Buat Virtual Environment (Opsional tapi Disarankan)**
+2.  **Buat Virtual Environment**
     ```bash
     python -m venv venv
-    # Windows:
-    venv\Scripts\activate
-    # Mac/Linux:
-    source venv/bin/activate
+    venv\Scripts\activate  # (atau source venv/bin/activate di Mac/Linux)
     ```
 
 3.  **Install Dependensi**
@@ -81,9 +76,15 @@ Ikuti langkah ini untuk menjalankan aplikasi di komputer Anda:
     python app.py
     ```
 
-5.  **Akses Aplikasi**
-    * Toko Online: Buka `http://127.0.0.1:5000` di browser.
-    * Blockchain Explorer: Buka `http://127.0.0.1:5000/explorer`.
+5.  **Akses Aplikasi (Port 5002)**
+    * **Toko Online:** Buka `http://127.0.0.1:5002` di browser.
+    * **Blockchain Explorer:** Buka `http://127.0.0.1:5002/explorer`.
+
+### 🔑 Akun Super Admin Default
+
+Anda dapat menguji Dashboard Admin tanpa mendaftar (akun dibuat otomatis saat startup):
+* **Username:** `admin`
+* **Password:** `admin123`
 
 ---
 
